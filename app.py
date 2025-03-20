@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import os
 from hashlib import sha3_256
+from sqlalchemy.exc import SQLAlchemyError
 
 app = Flask(__name__)
 
@@ -55,13 +56,36 @@ def delete_task(id):
     return jsonify({'message': 'Task deleted'})
 
 # (Tùy chọn) Endpoint GET /health
+# @app.route('/health', methods=['GET'])
+# def health_check():
+#     return jsonify({'status': 'ok'}), 200
 @app.route('/health', methods=['GET'])
 def health_check():
     try:
         # Kiểm tra kết nối cơ sở dữ liệu
         db.session.execute('SELECT 1')
+
+        # Thử thêm, đọc, và xóa một task
+        test_task = Task(title="Health Check Task", description="This is a health check test task")
+        db.session.add(test_task)
+        db.session.commit()
+
+        # Đọc task vừa thêm
+        task = Task.query.filter_by(title="Health Check Task").first()
+        if not task:
+            raise Exception("Failed to read test task")
+
+        # Xóa task vừa thêm
+        db.session.delete(task)
+        db.session.commit()
+
         return jsonify({'status': 'ok'}), 200
+
+    except SQLAlchemyError as e:
+        db.session.rollback()  # Rollback để đảm bảo trạng thái database nhất quán
+        return jsonify({'status': 'error', 'message': str(e)}), 500
     except Exception as e:
+        db.session.rollback()  # Rollback để đảm bảo trạng thái database nhất quán
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 if __name__ == '__main__':
