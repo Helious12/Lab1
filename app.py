@@ -6,6 +6,12 @@ from hashlib import sha3_256
 
 app = Flask(__name__)
 
+study_group = "211-331"
+fio = "Хоанг Тхань Лич"
+suffix = "Высоконагруженные системы. Лабораторная работа 1"
+int(sha3_256(f"{study_group} {fio} {suffix}".encode('utf-8')).hexdigest(), 16) % 3 + 1
+print('variant: 1')
+
 # Cấu hình cơ sở dữ liệu
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or 'postgresql://user:password@db:5432/mydb'  
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
