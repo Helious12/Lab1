@@ -56,8 +56,13 @@ def delete_task(id):
 
 # (Tùy chọn) Endpoint GET /health
 @app.route('/health', methods=['GET'])
-def get_health():
-    return jsonify({'status': 'OK'}), 200
+def health_check():
+    try:
+        # Kiểm tra kết nối cơ sở dữ liệu
+        db.session.execute('SELECT 1')
+        return jsonify({'status': 'ok'}), 200
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
