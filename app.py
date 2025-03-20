@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import os
@@ -6,16 +6,9 @@ from hashlib import sha3_256
 
 app = Flask(__name__)
 
-# Lấy thông tin biến thể
-study_group = "your_group_number"  # Điền số nhóm của bạn
-fio = "Your Full Name"  # Điền họ và tên của bạn
-suffix = "Высоконагруженные системы. Лабораторная работа 1"
-variant = int(sha3_256(f" {study_group} {fio} {suffix}".encode('utf-8')).hexdigest(), 16) % 3 + 1
-print(f"Your variant is: {variant}")
-
 # Cấu hình cơ sở dữ liệu
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or 'postgresql://user:password@db:5432/mydb'  # Sử dụng biến môi trường hoặc giá trị mặc định
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Tắt cảnh báo
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or 'postgresql://user:password@db:5432/mydb'  
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
