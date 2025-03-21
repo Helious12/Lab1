@@ -62,8 +62,8 @@ def delete_task(id):
 @app.route('/health', methods=['GET'])
 def health_check():
     try:
-        # Kiểm tra kết nối cơ sở dữ liệu
-        db.session.execute('SELECT 1')
+        # # Kiểm tra kết nối cơ sở dữ liệu
+        # db.session.execute('SELECT 1')
 
         # Thử thêm, đọc, và xóa một task
         test_task = Task(title="Health Check Task", description="This is a health check test task")
